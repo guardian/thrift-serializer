@@ -1,0 +1,9 @@
+{
+  "name": "thrift-serializer",
+  "description": "Serialize thrift models into bytes with optional compression",
+  "version": "0.0.1",
+  "main": "nodejs/index.js",
+  "dependencies": {
+    "thrift": "^0.9.3"
+  }
+}
