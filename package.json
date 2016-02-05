@@ -2,8 +2,15 @@
   "name": "thrift-serializer",
   "description": "Serialize thrift models into bytes with optional compression",
   "version": "0.0.1",
-  "main": "nodejs/index.js",
+  "main": "nodejs/src/index.js",
+  "scripts": {
+    "test": "mocha nodejs/test/*.spec.js"
+  },
   "dependencies": {
     "thrift": "^0.9.3"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^2.4.5"
   }
 }
