@@ -5,12 +5,13 @@ name := "thrift-serializer"
 organization := "com.gu"
 scalaVersion := "2.11.7"
 
-com.twitter.scrooge.ScroogeSBT.newSettings
-
-
 libraryDependencies ++= Seq(
+    "com.twitter" %% "scrooge-core" % "3.17.0",
+    "com.gu" %% "auditing-thrift-model" % "0.0.1" % "test",
     "org.apache.thrift" % "libthrift" % "0.9.2",
-    "com.twitter" %% "scrooge-core" % "3.17.0"
+    "org.scalatest" %% "scalatest" % "2.2.6" % "test",
+    "org.scalatestplus" %% "play" % "1.4.0-M4" % "test",
+    "com.fasterxml.jackson.core" % "jackson-databind" % "2.4.5"
 )
 
 unmanagedResourceDirectories in Compile += baseDirectory.value / "src/main"

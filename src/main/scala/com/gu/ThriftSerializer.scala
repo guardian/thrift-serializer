@@ -6,44 +6,44 @@ import com.twitter.scrooge.ThriftStruct
 import org.apache.thrift.protocol.TCompactProtocol
 import org.apache.thrift.transport.TMemoryBuffer
 
-trait ThriftSerializer {
-  import ThriftSerializer._
+object ThriftSerializer {
 
-  def serializeToBytes(struct: ThriftStruct): Array[Byte] = {
-    val buffer = new TMemoryBuffer(ThriftBufferInitialSize)
-    val protocol = new TCompactProtocol(buffer)
-    struct.write(protocol)
-    settings +: payload(buffer.getArray)
-  }
+  private val compressionDefault: CompressionType = NoneType
+  private val initialBufferDefault = 128
 
-  def settings: Byte = {
+  def serializeToBytes(struct: ThriftStruct, userCompressionType: Option[CompressionType], thriftBufferInitialSize: Option[Int]): Array[Byte] = {
+
+    val bufferSize = thriftBufferInitialSize.getOrElse(initialBufferDefault)
+    val buffer = new TMemoryBuffer(bufferSize)
+
+    val compressionType = userCompressionType.getOrElse(compressionDefault)
+
+    val compression: Byte = {
+      compressionType match {
+        case NoneType => 0x00.toByte
+        case GzipType => 0x01.toByte
+      }
+    }
+
+    val other: Byte = 0x07.toByte
+
     /*
        Ox00000XXX - used for compression type
        OxXXXXX000 - kept for the future
     */
-    val other: Byte = 0x07.toByte
-    (other & compression).toByte
+    val settings: Byte = (other & compression).toByte
+
+    val protocol = new TCompactProtocol(buffer)
+
+    struct.write(protocol)
+    settings +: payload(buffer.getArray, compressionType)
   }
 
-  val compression: Byte = {
-    compressionType match {
-      case NoneType => 0x00.toByte
-      case GzipType => 0x01.toByte
-    }
-  }
-
-  def payload(data: Array[Byte]): Array[Byte] = {
+  private def payload(data: Array[Byte], compressionType: CompressionType): Array[Byte] = {
     compressionType match {
       case NoneType => data
       case GzipType => Compression.gzip(data)
     }
   }
-
-}
-
-object ThriftSerializer {
-
-  private val ThriftBufferInitialSize = 128
-  private val compressionType: CompressionType = GzipType
 
 }
