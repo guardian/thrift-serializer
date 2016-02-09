@@ -17,7 +17,8 @@ libraryDependencies ++= Seq(
     "com.gu" %% "auditing-thrift-model" % "0.0.1",
     "org.apache.thrift" % "libthrift" % "0.9.2",
     "org.scalatest" %% "scalatest" % "2.2.6" % "test",
-    "org.scalatestplus" %% "play" % "1.4.0-M4" % "test"
+    "org.scalatestplus" %% "play" % "1.4.0-M4" % "test",
+    "com.fasterxml.jackson.core" % "jackson-databind" % "2.4.5"
 )
 
 unmanagedResourceDirectories in Compile += baseDirectory.value / "src/main"
