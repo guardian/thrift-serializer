@@ -9,8 +9,7 @@ var Compression = exports.Compression = {
 exports.write = function (struct, compression, callback) {
 	switch (compression || Compression.None) {
 		case Compression.None:
-			//TODO implement this
-			throw new Error('Uncompressed thrift message not implemented yet');
+			serialize(struct, callback);
 			break;
 		case Compression.Gzip:
 			zip(struct, callback);
@@ -26,8 +25,7 @@ exports.read = function (Model, rawData, callback) {
 
 	switch (buffer.readInt8(0)) {
 		case Compression.None:
-			// TODO implement no compression
-			throw new Error('Uncompressed thrift message not implemented yet');
+			readBytes(buffer.slice(1), Model, callback);
 			break;
 		case Compression.Gzip:
 			unzip(buffer.slice(1), Model, callback);
@@ -38,20 +36,11 @@ exports.read = function (Model, rawData, callback) {
 	}
 };
 
-function zip (struct, callback) {
+function writeBytes (struct, callback, transform) {
 	try {
 		var transport = new thrift.TFramedTransport(null, function (buffer) {
 			// Flush puts a 4-byte header, which needs to be parsed/sliced.
-  			buffer = buffer.slice(4);
-
-			zlib.gzip(buffer, function (err, data) {
-				process.nextTick(function () {
-					callback(null, Buffer.concat([
-						new Buffer([Compression.Gzip]),
-						data
-					]));
-				});
-			});
+			transform(buffer.slice(4), callback);
 		});
 		var protocol  = new thrift.TCompactProtocol(transport);
 		struct.write(protocol);
@@ -63,6 +52,34 @@ function zip (struct, callback) {
 	}
 }
 
+function serialize (struct, callback) {
+	writeBytes(struct, callback, function (buffer, cb) {
+		process.nextTick(function () {
+			cb(null, Buffer.concat([
+				new Buffer([Compression.None]),
+				buffer
+			]));
+		});
+	});
+}
+
+function zip (struct, callback) {
+	writeBytes(struct, callback, function (buffer, cb) {
+		zlib.gzip(buffer, function (err, data) {
+			process.nextTick(function () {
+				if (err) {
+					cb(err);
+				} else {
+					cb(null, Buffer.concat([
+						new Buffer([Compression.Gzip]),
+						data
+					]));
+				}
+			});
+		});
+	});
+}
+
 function unzip (buffer, Model, callback) {
 	zlib.gunzip(buffer, function (err, message) {
 		if (err) {
@@ -70,19 +87,23 @@ function unzip (buffer, Model, callback) {
 				callback(err);
 			});
 		} else {
-			var client = new Model();
-			try {
-				var transport = new thrift.TFramedTransport(message);
-				var protocol  = new thrift.TCompactProtocol(transport);
-				client.read(protocol);
-				process.nextTick(function () {
-					callback(null, client);
-				});
-			} catch (ex) {
-				process.nextTick(function () {
-					callback(ex);
-				});
-			}
+			readBytes(message, Model, callback);
 		}
 	});
+}
+
+function readBytes (buffer, Model, callback) {
+	var client = new Model();
+	try {
+		var transport = new thrift.TFramedTransport(buffer);
+		var protocol  = new thrift.TCompactProtocol(transport);
+		client.read(protocol);
+		process.nextTick(function () {
+			callback(null, client);
+		});
+	} catch (ex) {
+		process.nextTick(function () {
+			callback(ex);
+		});
+	}
 }
