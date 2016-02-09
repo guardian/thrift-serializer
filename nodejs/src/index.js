@@ -1,5 +1,6 @@
 var zlib = require('zlib');
-var thrift = require('thrift');
+var TFramedTransport = require('thrift/lib/nodejs/lib/thrift/framed_transport');
+var TCompactProtocol = require('thrift/lib/nodejs/lib/thrift/compact_protocol');
 
 var Compression = exports.Compression = {
 	None: 0,
@@ -38,11 +39,11 @@ exports.read = function (Model, rawData, callback) {
 
 function writeBytes (struct, callback, transform) {
 	try {
-		var transport = new thrift.TFramedTransport(null, function (buffer) {
+		var transport = new TFramedTransport(null, function (buffer) {
 			// Flush puts a 4-byte header, which needs to be parsed/sliced.
 			transform(buffer.slice(4), callback);
 		});
-		var protocol  = new thrift.TCompactProtocol(transport);
+		var protocol  = new TCompactProtocol(transport);
 		struct.write(protocol);
 		transport.flush();
 	} catch (ex) {
@@ -95,8 +96,8 @@ function unzip (buffer, Model, callback) {
 function readBytes (buffer, Model, callback) {
 	var client = new Model();
 	try {
-		var transport = new thrift.TFramedTransport(buffer);
-		var protocol  = new thrift.TCompactProtocol(transport);
+		var transport = new TFramedTransport(buffer);
+		var protocol  = new TCompactProtocol(transport);
 		client.read(protocol);
 		process.nextTick(function () {
 			callback(null, client);
