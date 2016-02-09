@@ -6,12 +6,12 @@ organization := "com.gu"
 scalaVersion := "2.11.7"
 
 libraryDependencies ++= Seq(
-    "com.twitter" %% "scrooge-core" % "3.17.0",
-    "com.gu" %% "auditing-thrift-model" % "0.0.1" % "test",
+    "com.twitter" %% "scrooge-core" % "4.5.0",
+    "com.gu" %% "auditing-thrift-model" % "0.0.2" % "test",
     "org.apache.thrift" % "libthrift" % "0.9.2",
     "org.scalatest" %% "scalatest" % "2.2.6" % "test",
-    "org.scalatestplus" %% "play" % "1.4.0-M4" % "test",
-    "com.fasterxml.jackson.core" % "jackson-databind" % "2.4.5"
+    "org.scalatestplus" %% "play" % "1.4.0" % "test",
+    "com.fasterxml.jackson.core" % "jackson-databind" % "2.7.1"
 )
 
 unmanagedResourceDirectories in Compile += baseDirectory.value / "src/main"
