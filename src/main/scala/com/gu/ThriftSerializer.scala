@@ -19,10 +19,10 @@ object ThriftSerializer {
     val compressionType = userCompressionType.getOrElse(compressionDefault)
 
     val compression: Byte = {
-        compressionType match {
-            case NoneType => 0x00.toByte
-            case GzipType => 0x01.toByte
-        }
+      compressionType match {
+        case NoneType => 0x00.toByte
+        case GzipType => 0x01.toByte
+      }
     }
 
     val other: Byte = 0x07.toByte

@@ -3,21 +3,21 @@ package com.gu.thrift.serializer
 import com.fasterxml.jackson.databind.util.ByteBufferBackedInputStream
 import org.apache.thrift.protocol.TCompactProtocol
 import org.apache.thrift.transport.TIOStreamTransport
-import scala.util.Try
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 import java.nio.ByteBuffer
-import com.gu.auditing.model.v1.Notification
+import com.twitter.scrooge.{ThriftStruct, ThriftStructCodec}
 
-object ThriftDeserializer {
+trait ThriftDeserializer[T <: ThriftStruct] {
 
-  def deserializeEvent(buffer: Array[Byte]): Try[Notification] = {
-    Try {
+  val codec: ThriftStructCodec[T]
+
+  def deserialize(buffer: Array[Byte]): Future[ThriftStruct] = {
+    Future {
       val settings = buffer.head
       val compressionType = compression(settings)
       compressionType match {
-        case NoneType =>{
-          println("was nonetype")
-          payload(buffer.tail)
-        }
+        case NoneType => payload(buffer.tail)
         case GzipType => payload(Compression.gunzip(buffer.tail))
       }
     }
@@ -33,15 +33,13 @@ object ThriftDeserializer {
     }
   }
 
-  private def payload(buffer: Array[Byte]): Notification = {
+  private def payload(buffer: Array[Byte]): ThriftStruct = {
     val byteBuffer: ByteBuffer = ByteBuffer.wrap(buffer)
     val bbis = new ByteBufferBackedInputStream(byteBuffer)
     val transport = new TIOStreamTransport(bbis)
     val protocol = new TCompactProtocol(transport)
-    val struct = Notification.decode(protocol)
+    val struct = codec.decode(protocol)
     struct
   }
 }
-
-
 

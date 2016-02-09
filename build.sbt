@@ -5,16 +5,9 @@ name := "thrift-serializer"
 organization := "com.gu"
 scalaVersion := "2.11.7"
 
-import com.twitter.scrooge._
-
-seq(ScroogeSBT.newSettings: _*)
-
-
-ScroogeSBT.scroogeThriftOutputFolder in Compile := sourceManaged.value / "thrift"
-
 libraryDependencies ++= Seq(
     "com.twitter" %% "scrooge-core" % "3.17.0",
-    "com.gu" %% "auditing-thrift-model" % "0.0.1",
+    "com.gu" %% "auditing-thrift-model" % "0.0.1" % "test",
     "org.apache.thrift" % "libthrift" % "0.9.2",
     "org.scalatest" %% "scalatest" % "2.2.6" % "test",
     "org.scalatestplus" %% "play" % "1.4.0-M4" % "test",
