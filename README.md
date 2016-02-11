@@ -34,3 +34,39 @@ to Sonatype and get added to Guardian projects.
 
 * Run sbt release. You will be asked about what version you want the
 release to be during the release process, you do not have to update it manually.
+
+
+### Node JS
+
+* Install using npm
+
+```
+npm install --save thrift-serializer
+```
+
+in your application or lambda you can **decode** messages
+
+```
+var Message = require('your-thrift-model');
+var serializer = require('thrift-serializer');
+
+serializer.read(Message, bytes, function (err, msg) {
+	console.log(msg);
+});
+```
+
+or **encode** them
+
+```
+var Message = require('your-thrift-model');
+var serializer = require('thrift-serializer');
+
+var message = new Message({
+	someData: ''
+});
+
+serializer.write(message, serializer.Compression.Gzip, function (err, bytes) {
+	// do something with your bytes, e.g. convert the buffer into a base64 string
+	console.log(bytes.toString('base64'));
+});
+```
