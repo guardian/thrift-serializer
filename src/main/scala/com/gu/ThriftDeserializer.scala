@@ -12,7 +12,7 @@ trait ThriftDeserializer[T <: ThriftStruct] {
 
   val codec: ThriftStructCodec[T]
 
-  def deserialize(buffer: Array[Byte]): Future[ThriftStruct] = {
+  def deserialize(buffer: Array[Byte]): Future[T] = {
     Future {
       val settings = buffer.head
       val compressionType = compression(settings)
@@ -33,7 +33,7 @@ trait ThriftDeserializer[T <: ThriftStruct] {
     }
   }
 
-  private def payload(buffer: Array[Byte]): ThriftStruct = {
+  private def payload(buffer: Array[Byte]): T = {
     val byteBuffer: ByteBuffer = ByteBuffer.wrap(buffer)
     val bbis = new ByteBufferBackedInputStream(byteBuffer)
     val transport = new TIOStreamTransport(bbis)
