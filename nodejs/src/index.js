@@ -7,34 +7,43 @@ var Compression = exports.Compression = {
 	Gzip: 1
 };
 
-exports.write = function (struct, compression, callback) {
-	switch (compression || Compression.None) {
-		case Compression.None:
-			serialize(struct, callback);
-			break;
-		case Compression.Gzip:
-			zip(struct, callback);
-			break;
-		default:
-			callback(new Error('Unable to understand the compression applied'));
-			break;
-	}
+exports.write = function (struct, compression, callback, noSettings) {
+    if (!noSettings) {
+        switch (compression || Compression.None) {
+            case Compression.None:
+                serialize(struct, callback);
+                break;
+            case Compression.Gzip:
+                zip(struct, callback);
+                break;
+            default:
+                callback(new Error('Unable to understand the compression applied'));
+                break;
+        }
+    } else {
+        serialize(struct, callback, true);
+    }
+
 };
 
-exports.read = function (Model, rawData, callback) {
+exports.read = function (Model, rawData, callback, noSettings) {
 	var buffer = Buffer.isBuffer(rawData) ? rawData : new Buffer(rawData, 'base64');
 
-	switch (buffer.readInt8(0)) {
-		case Compression.None:
-			readBytes(buffer.slice(1), Model, callback);
-			break;
-		case Compression.Gzip:
-			unzip(buffer.slice(1), Model, callback);
-			break;
-		default:
-			callback(new Error('Unable to understand the compression applied'));
-			break;
-	}
+    if (!noSettings) {
+        switch (buffer.readInt8(0)) {
+            case Compression.None:
+                readBytes(buffer.slice(1), Model, callback);
+                break;
+            case Compression.Gzip:
+                unzip(buffer.slice(1), Model, callback);
+                break;
+            default:
+                callback(new Error('Unable to understand the compression applied'));
+                break;
+        }
+    } else {
+        readBytes(buffer, Model, callback);
+    }
 };
 
 function writeBytes (struct, callback, transform) {
@@ -53,13 +62,18 @@ function writeBytes (struct, callback, transform) {
 	}
 }
 
-function serialize (struct, callback) {
+function serialize (struct, callback, noSettings) {
 	writeBytes(struct, callback, function (buffer, cb) {
 		process.nextTick(function () {
-			cb(null, Buffer.concat([
-				new Buffer([Compression.None]),
-				buffer
-			]));
+
+      var bufferWithSettings;
+      if (noSettings) {
+          bufferWithSettings = buffer;
+      } else {
+          bufferWithSettings = Buffer.concat([new Buffer([Compression.None]), buffer]);
+      }
+
+			cb(null, bufferWithSettings);
 		});
 	});
 }
