@@ -44,15 +44,15 @@ def myMethod(thriftObject: MyThriftObject): Unit = {
 If there is no compression type recorded in the bytes you wish to
 deserialize or if you don't want these to be included when serializing
 a thrift object, you can set the last arguments of the function calls
-to false. They are true by default.
+to true. They are false by default.
 
 ```
-MyDeserializer.deserialize(buffer, false).map(myEvent => {
+MyDeserializer.deserialize(buffer, true).map(myEvent => {
     // process the event
 }
 ```
 ```
-def myMethod(thriftObject: MyThriftObject, false): Unit = {
+def myMethod(thriftObject: MyThriftObject, true): Unit = {
   val bytes = serializeToBytes(thriftObject)
   //Do something with bytes
 }

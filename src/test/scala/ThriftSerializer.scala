@@ -45,14 +45,14 @@ class ThirftSerializerTest extends FreeSpec with Matchers {
     }
   }
 
-  "serialises the model correctly with settings set to false" - {
+  "serialises the model correctly without settings" - {
 
     val notification = Notification(App.FaciaTool, "operation", "email", "date", Some("id"), Option("message"))
 
-    val bytes = ThriftSerializer.serializeToBytes(notification, None, Some(128), false)
+    val bytes = ThriftSerializer.serializeToBytes(notification, None, Some(128), true)
 
     "serialized and deserialized back to itself" in {
-      ScalaFutures.whenReady(NotificationDeserializer.deserialize(bytes, false)) { result =>
+      ScalaFutures.whenReady(NotificationDeserializer.deserialize(bytes, true)) { result =>
         result should be(notification)
       }
     }

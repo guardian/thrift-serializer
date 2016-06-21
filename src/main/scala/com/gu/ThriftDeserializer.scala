@@ -12,10 +12,10 @@ trait ThriftDeserializer[T <: ThriftStruct] {
 
   val codec: ThriftStructCodec[T]
 
-  def deserialize(buffer: Array[Byte], withSettings: Boolean = true): Future[T] = {
+  def deserialize(buffer: Array[Byte], noSettings: Boolean = false): Future[T] = {
     Future {
 
-      if (withSettings) {
+      if (!noSettings) {
         val settings = buffer.head
         val compressionType = compression(settings)
         compressionType match {

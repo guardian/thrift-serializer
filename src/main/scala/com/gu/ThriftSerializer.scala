@@ -12,7 +12,7 @@ object ThriftSerializer {
   private val initialBufferDefault = 128
 
   def serializeToBytes(struct: ThriftStruct, userCompressionType: Option[CompressionType],
-    thriftBufferInitialSize: Option[Int], withSettings: Boolean=true): Array[Byte] = {
+    thriftBufferInitialSize: Option[Int], withSettings: Boolean=false): Array[Byte] = {
 
     val bufferSize = thriftBufferInitialSize.getOrElse(initialBufferDefault)
     val buffer = new TMemoryBuffer(bufferSize)
@@ -20,7 +20,7 @@ object ThriftSerializer {
 
     struct.write(protocol)
 
-    if (withSettings) {
+    if (!withSettings) {
       val compressionType = userCompressionType.getOrElse(compressionDefault)
 
       val compression: Byte = {
