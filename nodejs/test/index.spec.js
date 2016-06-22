@@ -11,17 +11,17 @@ describe('Thrift serializer', function () {
 			count: 0
 		});
 
-		serializer.write(message, null, function (err, bytes) {
+		serializer.write(message, serializer.Compression.Disable, function (err, bytes) {
 			expect(err).to.be.null;
 
-			serializer.read(Message, bytes, function (err, msg) {
+			serializer.read(Message, bytes, serializer.Compression.Disable, function (err, msg) {
 				expect(msg.text).to.eql('apple');
 				expect(msg.isError).to.be.true;
 				expect(msg.count).to.eql(0);
 
 				done(err);
-			}, true);
-		}, true);
+			});
+		});
 	});
 
 	it('should serialize without compression', function (done) {
