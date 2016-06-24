@@ -4,38 +4,59 @@ var TCompactProtocol = require('thrift/lib/nodejs/lib/thrift/compact_protocol');
 
 var Compression = exports.Compression = {
 	None: 0,
-	Gzip: 1
+	Gzip: 1,
+  Disable: 2
 };
 
 exports.write = function (struct, compression, callback) {
-	switch (compression || Compression.None) {
-		case Compression.None:
-			serialize(struct, callback);
-			break;
-		case Compression.Gzip:
-			zip(struct, callback);
-			break;
-		default:
-			callback(new Error('Unable to understand the compression applied'));
-			break;
-	}
+
+    switch (compression || Compression.None) {
+        case Compression.Disable:
+            serialize(struct, true, callback);
+        case Compression.None:
+            serialize(struct, false, callback);
+            break;
+        case Compression.Gzip:
+            zip(struct, callback);
+            break;
+        default:
+            callback(new Error('Unable to understand the compression applied'));
+            break;
+    }
 };
 
 exports.read = function (Model, rawData, callback) {
-	var buffer = Buffer.isBuffer(rawData) ? rawData : new Buffer(rawData, 'base64');
 
-	switch (buffer.readInt8(0)) {
-		case Compression.None:
-			readBytes(buffer.slice(1), Model, callback);
-			break;
-		case Compression.Gzip:
-			unzip(buffer.slice(1), Model, callback);
-			break;
-		default:
-			callback(new Error('Unable to understand the compression applied'));
-			break;
-	}
+	  var buffer = Buffer.isBuffer(rawData) ? rawData : new Buffer(rawData, 'base64');
+
+    if (arguments.length === 4) {
+        callback = arguments[3];
+        readWithoutCompression(Model, rawData, buffer, callback);
+    } else if (arguments.length === 3) {
+        readWithCompression(Model, rawData, buffer, callback);
+    }
+
 };
+
+function readWithCompression(Model, rawData, buffer, callback) {
+    switch (buffer.readInt8(0)) {
+        case Compression.None:
+            readBytes(buffer.slice(1), Model, callback);
+            break;
+        case Compression.Gzip:
+            unzip(buffer.slice(1), Model, callback);
+            break;
+        default:
+            callback(new Error('Unable to understand the compression applied'));
+            break;
+    };
+
+}
+
+function readWithoutCompression(Model, rawData, buffer, callback) {
+    readBytes(buffer, Model, callback);
+}
+
 
 function writeBytes (struct, callback, transform) {
 	try {
@@ -53,13 +74,18 @@ function writeBytes (struct, callback, transform) {
 	}
 }
 
-function serialize (struct, callback) {
+function serialize (struct, noSettings, callback) {
 	writeBytes(struct, callback, function (buffer, cb) {
 		process.nextTick(function () {
-			cb(null, Buffer.concat([
-				new Buffer([Compression.None]),
-				buffer
-			]));
+
+      var bufferWithSettings;
+      if (noSettings) {
+          bufferWithSettings = buffer;
+      } else {
+          bufferWithSettings = Buffer.concat([new Buffer([Compression.None]), buffer]);
+      }
+
+			cb(null, bufferWithSettings);
 		});
 	});
 }

@@ -45,6 +45,19 @@ class ThirftSerializerTest extends FreeSpec with Matchers {
     }
   }
 
+  "serialises the model correctly without settings" - {
+
+    val notification = Notification(App.FaciaTool, "operation", "email", "date", Some("id"), Option("message"))
+
+    val bytes = ThriftSerializer.serializeToBytes(notification, None, Some(128), true)
+
+    "serialized and deserialized back to itself" in {
+      ScalaFutures.whenReady(NotificationDeserializer.deserialize(bytes, true)) { result =>
+        result should be(notification)
+      }
+    }
+  }
+
   "deserialization throws when invalid compression bytes set" - {
 
     val errorMessage = "The compression type: 2 is not supported"
