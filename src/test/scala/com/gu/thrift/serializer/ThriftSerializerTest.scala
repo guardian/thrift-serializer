@@ -1,11 +1,10 @@
 package com.gu.thrift.serializer
 
 import com.gu.auditing.model.v1.{App, Notification}
-import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{FreeSpec, Matchers}
-import scala.concurrent.Future
+import org.scalatest.concurrent.ScalaFutures
 
-class ThirftSerializerTest extends FreeSpec with Matchers {
+class ThriftSerializerTest extends FreeSpec with Matchers {
 
   object NotificationDeserializer extends ThriftDeserializer[Notification] {
     val codec = Notification

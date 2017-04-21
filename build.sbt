@@ -3,18 +3,20 @@ import ReleaseStateTransformations._
 
 name := "thrift-serializer"
 organization := "com.gu"
-scalaVersion := "2.11.7"
+scalaVersion := "2.11.8"
 
 libraryDependencies ++= Seq(
-    "com.twitter" %% "scrooge-core" % "4.5.0",
-    "com.gu" %% "auditing-thrift-model" % "0.0.2" % "test",
-    "org.apache.thrift" % "libthrift" % "0.9.2",
-    "org.scalatest" %% "scalatest" % "2.2.6" % "test",
-    "org.scalatestplus" %% "play" % "1.4.0" % "test",
-    "com.fasterxml.jackson.core" % "jackson-databind" % "2.7.1"
+    "com.twitter" %% "scrooge-core" % "4.15.0",
+    "org.apache.thrift" % "libthrift" % "0.10.0",
+    "org.scalatest" %% "scalatest" % "3.0.1" % "test"
 )
 
-unmanagedResourceDirectories in Compile += baseDirectory.value / "src/main"
+// Settings for building the thrift definition used in test
+scroogeThriftSourceFolder in Test <<= baseDirectory {
+    base => base / "src/test/thrift"
+}
+scroogeThriftOutputFolder in Test := (sourceManaged in Test).value
+managedSourceDirectories in Test += (scroogeThriftOutputFolder in Test).value
 
 // Publish settings
 scmInfo := Some(ScmInfo(url("https://github.com/guardian/thrift-serializer"),
@@ -34,6 +36,8 @@ pomExtra := (
     )
 
 licenses := Seq("Apache V2" -> url("http://www.apache.org/licenses/LICENSE-2.0.html"))
+
+crossScalaVersions := Seq("2.11.8", "2.12.1")
 
 releaseCrossBuild := true
 releasePublishArtifactsAction := PgpKeys.publishSigned.value

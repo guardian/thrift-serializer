@@ -1,12 +1,13 @@
 package com.gu.thrift.serializer
 
-import com.fasterxml.jackson.databind.util.ByteBufferBackedInputStream
+import java.nio.ByteBuffer
+
+import com.twitter.scrooge.{ThriftStruct, ThriftStructCodec}
 import org.apache.thrift.protocol.TCompactProtocol
 import org.apache.thrift.transport.TIOStreamTransport
+
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
-import java.nio.ByteBuffer
-import com.twitter.scrooge.{ThriftStruct, ThriftStructCodec}
 
 trait ThriftDeserializer[T <: ThriftStruct] {
 
