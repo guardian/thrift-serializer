@@ -1,6 +1,9 @@
 Thrift Serializer
 ========
 
+ - 2.11: [![Maven Central](https://img.shields.io/maven-central/v/com.gu/thrift-serializer_2.11.svg)](https://mvnrepository.com/artifact/com.gu/thrift-serializer_2.11)
+ - 2.12: [![Maven Central](https://img.shields.io/maven-central/v/com.gu/thrift-serializer_2.12.svg)](https://mvnrepository.com/artifact/com.gu/thrift-serializer_2.12)
+
 A library for serializing a thrift model into bytes.
 
 ### How to use
@@ -8,7 +11,7 @@ A library for serializing a thrift model into bytes.
 * Add the library as a depency by adding
 
 ```
-"com.gu" %% "thrift-serializer" % "0.0.1"
+"com.gu" %% "thrift-serializer" % "1.1.1"
 ```
 
 to your applications libraryDepencies.
