@@ -1,6 +1,6 @@
 package com.gu.thrift.serializer
 
-import java.io.{ByteArrayInputStream, ByteArrayOutputStream, IOException, InputStream, OutputStream}
+import java.io._
 import java.util.zip.{GZIPInputStream, GZIPOutputStream}
 
 import scala.annotation.tailrec
