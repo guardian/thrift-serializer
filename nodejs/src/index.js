@@ -13,6 +13,7 @@ exports.write = function (struct, compression, callback) {
     switch (compression || Compression.None) {
         case Compression.Disable:
             serialize(struct, true, callback);
+            break;
         case Compression.None:
             serialize(struct, false, callback);
             break;
