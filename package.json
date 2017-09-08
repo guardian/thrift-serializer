@@ -1,7 +1,7 @@
 {
-  "name": "thrift-serializer",
+  "name": "@guardian/thrift-serializer",
   "description": "Serialize thrift models into bytes with optional compression",
-  "version": "1.1.0",
+  "version": "2.1.0",
   "main": "nodejs/src/index.js",
   "scripts": {
     "test": "mocha nodejs/test/*.spec.js"
