@@ -21,7 +21,8 @@ trait ThriftDeserializer[T <: ThriftStruct] {
         val compressionType = compression(settings)
         compressionType match {
           case NoneType => payload(buffer.tail)
-          case GzipType => payload(Compression.gunzip(buffer.tail))
+          case GzipType => payload(GzipCompression.uncompress(buffer.tail))
+          case ZstdType => payload(ZstdCompression.uncompress(buffer.tail))
         }
       } else payload(buffer)
 
@@ -34,6 +35,7 @@ trait ThriftDeserializer[T <: ThriftStruct] {
     compressionType match {
       case 0 => NoneType
       case 1 => GzipType
+      case 2 => ZstdType
       case x => throw new RuntimeException(s"The compression type: ${x} is not supported")
     }
   }

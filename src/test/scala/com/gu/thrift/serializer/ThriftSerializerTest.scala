@@ -12,6 +12,22 @@ class ThriftSerializerTest extends FreeSpec with Matchers {
 
   val notification = Notification(App.FaciaTool, "operation", "email", "date", Some("id"), Some("message"))
 
+  "serialises the model correctly with ZstdType" - {
+
+    val bytes = ThriftSerializer.serializeToBytes(notification, Some(ZstdType), Some(128))
+
+    "lower order bits set correctly" in {
+      bytes.head should be (2)
+    }
+
+    "serialized and deserialized back to itself" in {
+
+      ScalaFutures.whenReady(NotificationDeserializer.deserialize(bytes)) { result =>
+        result should be(notification)
+      }
+    }
+  }
+
   "serialises the model correctly with GzipType" - {
 
     val bytes = ThriftSerializer.serializeToBytes(notification, Some(GzipType), Some(128))

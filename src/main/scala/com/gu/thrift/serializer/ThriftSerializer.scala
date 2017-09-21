@@ -27,6 +27,7 @@ object ThriftSerializer {
         compressionType match {
           case NoneType => 0x00.toByte
           case GzipType => 0x01.toByte
+          case ZstdType => 0x02.toByte
         }
       }
 
@@ -45,7 +46,8 @@ object ThriftSerializer {
   private def payload(data: Array[Byte], compressionType: CompressionType): Array[Byte] = {
     compressionType match {
       case NoneType => data
-      case GzipType => Compression.gzip(data)
+      case GzipType => GzipCompression.compress(data)
+      case ZstdType => ZstdCompression.compress(data)
     }
   }
 
