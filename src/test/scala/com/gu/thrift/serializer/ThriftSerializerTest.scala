@@ -73,9 +73,9 @@ class ThriftSerializerTest extends FreeSpec with Matchers {
     }
   }
 
-  "deserialization throws when invalid compression bytes set" - {
+  "deserialization throws when invalid compression bytes set" in {
 
-    val errorMessage = "The compression type: 2 is not supported"
+    val errorMessage = "Read error or truncated source"
     val bytes = Array.fill[Byte](2)(0x02.toByte)
     val future = NotificationDeserializer.deserialize(bytes)
 
@@ -84,7 +84,7 @@ class ThriftSerializerTest extends FreeSpec with Matchers {
     }
 
   }
-  "deserilization throws when invalid set of bytes" - {
+  "deserilization throws when invalid set of bytes" in {
 
     val errorMessage = "Required field 'app' was not found in serialized data for struct Notification"
     val bytes = Array.fill[Byte](5)(0x00.toByte)
