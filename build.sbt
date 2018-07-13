@@ -8,8 +8,7 @@ scalaVersion := "2.11.8"
 libraryDependencies ++= Seq(
     "com.twitter" %% "scrooge-core" % "4.15.0",
     "org.apache.thrift" % "libthrift" % "0.10.0",
-    "com.novus" %% "salat-core" % "1.9.9",
-    "com.github.luben" % "zstd-jni" % "1.0.0",
+    "com.github.luben" % "zstd-jni" % "1.3.5-2",
     "org.scalatest" %% "scalatest" % "3.0.1" % "test"
 )
 
