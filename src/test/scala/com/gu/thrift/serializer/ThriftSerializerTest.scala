@@ -75,8 +75,8 @@ class ThriftSerializerTest extends FreeSpec with Matchers {
 
   "deserialization throws when invalid compression bytes set" in {
 
-    val errorMessage = "Read error or truncated source"
-    val bytes = Array.fill[Byte](2)(0x02.toByte)
+    val errorMessage = "The compression type: 3 is not supported"
+    val bytes = Array.fill[Byte](2)(0x03.toByte)
     val future = NotificationDeserializer.deserialize(bytes)
 
     ScalaFutures.whenReady(NotificationDeserializer.deserialize(bytes).failed) { error =>

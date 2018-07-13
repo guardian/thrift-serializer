@@ -13,43 +13,55 @@ case object GzipType extends CompressionType
 case object ZstdType extends CompressionType
 
 object GzipCompression {
+  def compress(data: Array[Byte]): Array[Byte] =
+    try {
+      val bos = new ByteArrayOutputStream()
+      val out = new GZIPOutputStream(bos)
+      out.write(data)
+      out.close()
+      bos.toByteArray
+    } catch {
+      case e: IOException => throw new RuntimeException(e)
+    }
 
-  def compress(data: Array[Byte]): Array[Byte] = {
-    val bos = new ByteArrayOutputStream()
-    val out = new GZIPOutputStream(bos)
-    out.write(data)
-    out.close()
-    bos.toByteArray
-  }
-
-  def uncompress(data: Array[Byte]): Array[Byte] = {
-    val bos = new ByteArrayOutputStream()
-    val bis = new ByteArrayInputStream(data)
-    val in = new GZIPInputStream(bis)
-    IOUtils.copy(in, bos)
-    in.close()
-    bos.close()
-    bos.toByteArray()
-  }
+  def uncompress(data: Array[Byte]): Array[Byte] =
+    try {
+      val bos = new ByteArrayOutputStream()
+      val bis = new ByteArrayInputStream(data)
+      val in = new GZIPInputStream(bis)
+      IOUtils.copy(in, bos)
+      in.close()
+      bos.close()
+      bos.toByteArray()
+    } catch {
+      case e: IOException => throw new RuntimeException(e)
+    }
 }
 
 object ZstdCompression {
-  def compress(data: Array[Byte]): Array[Byte] = {
-    val bos = new ByteArrayOutputStream()
-    val out = new ZstdOutputStream(bos)
-    out.write(data)
-    out.close()
-    bos.toByteArray
-  }
+  def compress(data: Array[Byte]): Array[Byte] = 
+    try {
+      val bos = new ByteArrayOutputStream()
+      val out = new ZstdOutputStream(bos)
+      out.write(data)
+      out.close()
+      bos.toByteArray
+    } catch {
+      case e: IOException => throw new RuntimeException(e)
+    }
   
-  def uncompress(data: Array[Byte]): Array[Byte] = {
-    val bos = new ByteArrayOutputStream()
-    val in = new ZstdInputStream(new ByteArrayInputStream(data))
-    IOUtils.copy(in, bos)
-    in.close()
-    bos.close()
-    bos.toByteArray
-  }
+  def uncompress(data: Array[Byte]): Array[Byte] = 
+    try {
+      val bos = new ByteArrayOutputStream()
+      val in = new ZstdInputStream(new ByteArrayInputStream(data))
+      IOUtils.copy(in, bos)
+      in.close()
+      bos.close()
+      bos.toByteArray
+    } catch {
+      case e: IOException => throw new RuntimeException(e)
+    }
+      
 }
 
 private[serializer] object IOUtils {
