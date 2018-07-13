@@ -11,7 +11,7 @@ A library for serializing a thrift model into bytes.
 * Add the library as a depency by adding
 
 ```
-"com.gu" %% "thrift-serializer" % "1.1.1"
+"com.gu" %% "thrift-serializer" % "2.1.1"
 ```
 
 to your applications libraryDepencies.
