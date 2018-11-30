@@ -6,9 +6,7 @@ import scala.util.Success
 
 class ThriftSerializerTest extends FreeSpec with Matchers {
 
-  object NotificationDeserializer extends ThriftDeserializer[Notification] {
-    val codec = Notification
-  }
+  implicit val codec = Notification
 
   val notification = Notification(App.FaciaTool, "operation", "email", "date", Some("id"), Some("message"))
 
@@ -21,7 +19,7 @@ class ThriftSerializerTest extends FreeSpec with Matchers {
     }
 
     "serialized and deserialized back to itself" in {
-      NotificationDeserializer.deserialize(bytes) should be(Success(notification))
+      ThriftDeserializer.deserialize(bytes) should be(Success(notification))
     }
   }
 
@@ -35,7 +33,7 @@ class ThriftSerializerTest extends FreeSpec with Matchers {
 
     "serialized and deserialized back to itself" in {
 
-      NotificationDeserializer.deserialize(bytes) should be(Success(notification))
+      ThriftDeserializer.deserialize(bytes) should be(Success(notification))
     }
   }
 
@@ -49,7 +47,7 @@ class ThriftSerializerTest extends FreeSpec with Matchers {
     }
 
     "serialized and deserialized back to itself" in {
-      NotificationDeserializer.deserialize(bytes) should be(Success(notification))
+      ThriftDeserializer.deserialize(bytes) should be(Success(notification))
     }
   }
 
@@ -60,7 +58,7 @@ class ThriftSerializerTest extends FreeSpec with Matchers {
     val bytes = ThriftSerializer.serializeToBytes(notification, None, Some(128), true)
 
     "serialized and deserialized back to itself" in {
-      NotificationDeserializer.deserialize(bytes, true) should be(Success(notification))
+      ThriftDeserializer.deserialize(bytes, true) should be(Success(notification))
     }
   }
 
@@ -69,7 +67,7 @@ class ThriftSerializerTest extends FreeSpec with Matchers {
     val errorMessage = "The compression type: 3 is not supported"
     val bytes = Array.fill[Byte](2)(0x03.toByte)
 
-    NotificationDeserializer.deserialize(bytes).failed.map(_.getMessage) should be (Success(errorMessage))
+    ThriftDeserializer.deserialize(bytes).failed.map(_.getMessage) should be (Success(errorMessage))
 
   }
   "deserilization throws when invalid set of bytes" in {
@@ -77,7 +75,7 @@ class ThriftSerializerTest extends FreeSpec with Matchers {
     val errorMessage = "Required field 'app' was not found in serialized data for struct Notification"
     val bytes = Array.fill[Byte](5)(0x00.toByte)
 
-    NotificationDeserializer.deserialize(bytes).failed.map(_.getMessage) should be (Success(errorMessage))
+    ThriftDeserializer.deserialize(bytes).failed.map(_.getMessage) should be (Success(errorMessage))
 
   }
 }

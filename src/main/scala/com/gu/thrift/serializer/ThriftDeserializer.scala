@@ -7,11 +7,9 @@ import org.apache.thrift.protocol.TCompactProtocol
 import org.apache.thrift.transport.TIOStreamTransport
 import scala.util.Try
 
-trait ThriftDeserializer[T <: ThriftStruct] {
+object ThriftDeserializer {
 
-  val codec: ThriftStructCodec[T]
-
-  def deserialize(buffer: Array[Byte], noSettings: Boolean = false): Try[T] =
+  def deserialize[T <: ThriftStruct : ThriftStructCodec](buffer: Array[Byte], noSettings: Boolean = false): Try[T] =
     Try {
       if (!noSettings) {
         val settings = buffer.head
@@ -35,7 +33,7 @@ trait ThriftDeserializer[T <: ThriftStruct] {
     }
   }
 
-  private def payload(buffer: Array[Byte]): T = {
+  private def payload[T <: ThriftStruct](buffer: Array[Byte])(implicit codec: ThriftStructCodec[T]): T = {
     val byteBuffer: ByteBuffer = ByteBuffer.wrap(buffer)
     val bbis = new ByteBufferBackedInputStream(byteBuffer)
     val transport = new TIOStreamTransport(bbis)
