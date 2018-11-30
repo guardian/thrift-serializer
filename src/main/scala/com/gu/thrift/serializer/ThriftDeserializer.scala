@@ -5,17 +5,14 @@ import java.nio.ByteBuffer
 import com.twitter.scrooge.{ThriftStruct, ThriftStructCodec}
 import org.apache.thrift.protocol.TCompactProtocol
 import org.apache.thrift.transport.TIOStreamTransport
-
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.Try
 
 trait ThriftDeserializer[T <: ThriftStruct] {
 
   val codec: ThriftStructCodec[T]
 
-  def deserialize(buffer: Array[Byte], noSettings: Boolean = false): Future[T] = {
-    Future {
-
+  def deserialize(buffer: Array[Byte], noSettings: Boolean = false): Try[T] =
+    Try {
       if (!noSettings) {
         val settings = buffer.head
         val compressionType = compression(settings)
@@ -25,9 +22,7 @@ trait ThriftDeserializer[T <: ThriftStruct] {
           case ZstdType => payload(ZstdCompression.uncompress(buffer.tail))
         }
       } else payload(buffer)
-
     }
-  }
 
   private def compression(settings: Byte): CompressionType = {
     val compressionMask = 0x07.toByte
