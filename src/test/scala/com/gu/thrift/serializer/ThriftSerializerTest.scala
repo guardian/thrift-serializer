@@ -67,7 +67,7 @@ class ThriftSerializerTest extends FreeSpec with Matchers {
     val errorMessage = "The compression type: 3 is not supported"
     val bytes = Array.fill[Byte](2)(0x03.toByte)
 
-    ThriftDeserializer.deserialize(bytes).failed.map(_.getMessage) should be (Success(errorMessage))
+    ThriftDeserializer.deserialize(bytes, false).failed.map(_.getMessage) should be (Success(errorMessage))
 
   }
   "deserilization throws when invalid set of bytes" in {

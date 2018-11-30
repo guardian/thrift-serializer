@@ -13,9 +13,9 @@ object ThriftDeserializer {
     * the first byte for details on how the value is encoded. Plain
     * values can be decoded by setting the `noHeader` flag to `true`.
     */
-  def deserialize[T <: ThriftStruct : ThriftStructCodec](buffer: Array[Byte], noHeader: Boolean = false): Try[T] =
+  def deserialize[T <: ThriftStruct : ThriftStructCodec](buffer: Array[Byte], noHeader: Boolean): Try[T] =
     Try {
-      if (!noSettings) {
+      if (!noHeader) {
         val settings = buffer.head
         val compressionType = compression(settings)
         compressionType match {
@@ -25,6 +25,13 @@ object ThriftDeserializer {
         }
       } else payload(buffer)
     }
+
+  /** Reads a Thrift value from a byte array. Tries to read the first byte
+    * for details on how the value is encoded and decode accordingly, or
+    * decode as a plain value if it fails.
+    */
+  def deserialize[T <: ThriftStruct : ThriftStructCodec](buffer: Array[Byte]): Try[T] =
+    deserialize(buffer, false) orElse deserialize(buffer, true)
 
   private def compression(settings: Byte): CompressionType = {
     val compressionMask = 0x07.toByte
