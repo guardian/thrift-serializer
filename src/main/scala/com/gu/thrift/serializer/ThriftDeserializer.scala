@@ -9,7 +9,11 @@ import scala.util.Try
 
 object ThriftDeserializer {
 
-  def deserialize[T <: ThriftStruct : ThriftStructCodec](buffer: Array[Byte], noSettings: Boolean = false): Try[T] =
+  /** Reads a Thrift value from a byte array. By default, will try to read
+    * the first byte for details on how the value is encoded. Plain
+    * values can be decoded by setting the `noHeader` flag to `true`.
+    */
+  def deserialize[T <: ThriftStruct : ThriftStructCodec](buffer: Array[Byte], noHeader: Boolean = false): Try[T] =
     Try {
       if (!noSettings) {
         val settings = buffer.head
