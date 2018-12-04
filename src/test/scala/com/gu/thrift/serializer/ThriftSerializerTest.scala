@@ -58,7 +58,7 @@ class ThriftSerializerTest extends FreeSpec with Matchers {
     val bytes = ThriftSerializer.serializeToBytes(notification, None, Some(128), true)
 
     "serialized and deserialized back to itself" in {
-      ThriftDeserializer.deserialize(bytes, true) should be(Success(notification))
+      ThriftDeserializer.deserialize(bytes) should be(Success(notification))
     }
   }
 
