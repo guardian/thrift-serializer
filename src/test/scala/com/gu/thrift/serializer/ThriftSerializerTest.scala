@@ -2,13 +2,11 @@ package com.gu.thrift.serializer
 
 import com.gu.auditing.model.v1.{App, Notification}
 import org.scalatest.{FreeSpec, Matchers}
-import org.scalatest.concurrent.ScalaFutures
+import scala.util.Success
 
 class ThriftSerializerTest extends FreeSpec with Matchers {
 
-  object NotificationDeserializer extends ThriftDeserializer[Notification] {
-    val codec = Notification
-  }
+  implicit val codec = Notification
 
   val notification = Notification(App.FaciaTool, "operation", "email", "date", Some("id"), Some("message"))
 
@@ -21,10 +19,7 @@ class ThriftSerializerTest extends FreeSpec with Matchers {
     }
 
     "serialized and deserialized back to itself" in {
-
-      ScalaFutures.whenReady(NotificationDeserializer.deserialize(bytes)) { result =>
-        result should be(notification)
-      }
+      ThriftDeserializer.deserialize(bytes) should be(Success(notification))
     }
   }
 
@@ -38,9 +33,7 @@ class ThriftSerializerTest extends FreeSpec with Matchers {
 
     "serialized and deserialized back to itself" in {
 
-      ScalaFutures.whenReady(NotificationDeserializer.deserialize(bytes)) { result =>
-        result should be(notification)
-      }
+      ThriftDeserializer.deserialize(bytes) should be(Success(notification))
     }
   }
 
@@ -54,9 +47,7 @@ class ThriftSerializerTest extends FreeSpec with Matchers {
     }
 
     "serialized and deserialized back to itself" in {
-      ScalaFutures.whenReady(NotificationDeserializer.deserialize(bytes)) { result =>
-        result should be(notification)
-      }
+      ThriftDeserializer.deserialize(bytes) should be(Success(notification))
     }
   }
 
@@ -67,9 +58,7 @@ class ThriftSerializerTest extends FreeSpec with Matchers {
     val bytes = ThriftSerializer.serializeToBytes(notification, None, Some(128), true)
 
     "serialized and deserialized back to itself" in {
-      ScalaFutures.whenReady(NotificationDeserializer.deserialize(bytes, true)) { result =>
-        result should be(notification)
-      }
+      ThriftDeserializer.deserialize(bytes) should be(Success(notification))
     }
   }
 
@@ -77,22 +66,16 @@ class ThriftSerializerTest extends FreeSpec with Matchers {
 
     val errorMessage = "The compression type: 3 is not supported"
     val bytes = Array.fill[Byte](2)(0x03.toByte)
-    val future = NotificationDeserializer.deserialize(bytes)
 
-    ScalaFutures.whenReady(NotificationDeserializer.deserialize(bytes).failed) { error =>
-      error.getMessage should be (errorMessage)
-    }
+    ThriftDeserializer.deserialize(bytes, false).failed.map(_.getMessage) should be (Success(errorMessage))
 
   }
   "deserilization throws when invalid set of bytes" in {
 
     val errorMessage = "Required field 'app' was not found in serialized data for struct Notification"
     val bytes = Array.fill[Byte](5)(0x00.toByte)
-    val future = NotificationDeserializer.deserialize(bytes)
 
-    ScalaFutures.whenReady(NotificationDeserializer.deserialize(bytes).failed) { error =>
-      error.getMessage() should be (errorMessage)
-    }
+    ThriftDeserializer.deserialize(bytes).failed.map(_.getMessage) should be (Success(errorMessage))
 
   }
 }

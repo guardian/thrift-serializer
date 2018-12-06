@@ -5,18 +5,17 @@ import java.nio.ByteBuffer
 import com.twitter.scrooge.{ThriftStruct, ThriftStructCodec}
 import org.apache.thrift.protocol.TCompactProtocol
 import org.apache.thrift.transport.TIOStreamTransport
+import scala.util.Try
 
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
+object ThriftDeserializer {
 
-trait ThriftDeserializer[T <: ThriftStruct] {
-
-  val codec: ThriftStructCodec[T]
-
-  def deserialize(buffer: Array[Byte], noSettings: Boolean = false): Future[T] = {
-    Future {
-
-      if (!noSettings) {
+  /** Reads a Thrift value from a byte array. By default, will try to read
+    * the first byte for details on how the value is encoded. Plain
+    * values can be decoded by setting the `noHeader` flag to `true`.
+    */
+  def deserialize[T <: ThriftStruct : ThriftStructCodec](buffer: Array[Byte], noHeader: Boolean): Try[T] =
+    Try {
+      if (!noHeader) {
         val settings = buffer.head
         val compressionType = compression(settings)
         compressionType match {
@@ -25,9 +24,14 @@ trait ThriftDeserializer[T <: ThriftStruct] {
           case ZstdType => payload(ZstdCompression.uncompress(buffer.tail))
         }
       } else payload(buffer)
-
     }
-  }
+
+  /** Reads a Thrift value from a byte array. Tries to read the first byte
+    * for details on how the value is encoded and decode accordingly, or
+    * decode as a plain value if it fails.
+    */
+  def deserialize[T <: ThriftStruct : ThriftStructCodec](buffer: Array[Byte]): Try[T] =
+    deserialize(buffer, false) orElse deserialize(buffer, true)
 
   private def compression(settings: Byte): CompressionType = {
     val compressionMask = 0x07.toByte
@@ -40,7 +44,7 @@ trait ThriftDeserializer[T <: ThriftStruct] {
     }
   }
 
-  private def payload(buffer: Array[Byte]): T = {
+  private def payload[T <: ThriftStruct](buffer: Array[Byte])(implicit codec: ThriftStructCodec[T]): T = {
     val byteBuffer: ByteBuffer = ByteBuffer.wrap(buffer)
     val bbis = new ByteBufferBackedInputStream(byteBuffer)
     val transport = new TIOStreamTransport(bbis)
