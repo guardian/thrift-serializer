@@ -3,7 +3,7 @@ import ReleaseStateTransformations._
 
 name := "thrift-serializer"
 organization := "com.gu"
-scalaVersion := "2.11.8"
+scalaVersion := "2.11.12"
 
 libraryDependencies ++= Seq(
     "com.twitter" %% "scrooge-core" % "4.15.0",
@@ -38,7 +38,7 @@ pomExtra := (
 
 licenses := Seq("Apache V2" -> url("http://www.apache.org/licenses/LICENSE-2.0.html"))
 
-crossScalaVersions := Seq("2.11.8", "2.12.1")
+crossScalaVersions := Seq("2.11.12", "2.12.7")
 
 releaseCrossBuild := true
 releasePublishArtifactsAction := PgpKeys.publishSigned.value
