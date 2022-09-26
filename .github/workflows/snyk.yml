@@ -10,8 +10,7 @@ jobs:
       DEBUG: true
       ORG: guardian-test
       SKIP_NODE: false
-      
       NODE_VERSION_OVERRIDE: 16
-      
+      NODE_PACKAGE_JSON_FILES_MISSING_LOCK: ./package.json
     secrets:
        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
