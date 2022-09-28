@@ -32,8 +32,8 @@ object ThriftDeserializer {
     */
   def deserialize[T <: ThriftStruct : ThriftStructCodec](buffer: Array[Byte], noHeader: Boolean): Try[T] = deserialize(ByteBuffer.wrap(buffer), noHeader)
 
-  def deserialize[T <: ThriftStruct : ThriftStructCodec](buffer: Array[Byte]):Try[T] = deserialize(buffer, false)
-  def deserialize[T <: ThriftStruct : ThriftStructCodec](buffer: ByteBuffer):Try[T] = deserialize(buffer, false)
+  def deserialize[T <: ThriftStruct : ThriftStructCodec](buffer: Array[Byte]):Try[T] = deserialize(buffer, false) orElse deserialize(buffer, true)
+  def deserialize[T <: ThriftStruct : ThriftStructCodec](buffer: ByteBuffer):Try[T] = deserialize(buffer, false) orElse deserialize(buffer, true)
 
   private def compression(settings: Byte): CompressionType = {
     val compressionMask = 0x07.toByte

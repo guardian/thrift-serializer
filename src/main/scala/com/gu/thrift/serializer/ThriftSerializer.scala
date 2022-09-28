@@ -1,12 +1,8 @@
 package com.gu.thrift.serializer
 
-import com.twitter.io.Buf.ByteArray
-
-import java.lang.{Byte => JByte}
 import com.twitter.scrooge.ThriftStruct
 import org.apache.thrift.protocol.TCompactProtocol
 import org.apache.thrift.transport.TMemoryBuffer
-
 import java.nio.ByteBuffer
 
 object ThriftSerializer {
