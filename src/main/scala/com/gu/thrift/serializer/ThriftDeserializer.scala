@@ -14,7 +14,7 @@ object ThriftDeserializer {
     */
   def deserialize[T <: ThriftStruct : ThriftStructCodec](buffer: ByteBuffer, noHeader: Boolean): Try[T] = Try {
     if(!noHeader) {
-      val settings = buffer.get(0)
+      val settings = buffer.get() //also increments buffer position by 1, so buffer.slice() below returns the "tail"
       val compressionType = compression(settings)
       compressionType match {
         case NoneType => payload(buffer.slice())

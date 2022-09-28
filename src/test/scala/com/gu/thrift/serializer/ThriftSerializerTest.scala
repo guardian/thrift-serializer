@@ -45,8 +45,7 @@ class ThriftSerializerTest extends FreeSpec with Matchers {
     "lower order bits set correctly" in {
       bytes.get(0) should be (0)
     }
-//    val decoded:String = new String(bytes.tail, "UTF-8")
-//    println(decoded)
+
     "serialized and deserialized back to itself" in {
       ThriftDeserializer.deserialize(bytes) should be(Success(notification))
     }
@@ -59,7 +58,7 @@ class ThriftSerializerTest extends FreeSpec with Matchers {
     val bytes = ThriftSerializer.serializeToBytes(notification, None, Some(128), true).array()
 
     "serialized and deserialized back to itself" in {
-      ThriftDeserializer.deserialize(bytes) should be(Success(notification))
+      ThriftDeserializer.deserialize(bytes, noHeader=true) should be(Success(notification))
     }
   }
 
