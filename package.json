@@ -7,10 +7,10 @@
     "test": "mocha nodejs/test/*.spec.js"
   },
   "dependencies": {
-    "thrift": "^0.9.3"
+    "thrift": "^0.17.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "mocha": "^2.4.5"
+    "mocha": "^10.0.0"
   }
 }
