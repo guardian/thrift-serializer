@@ -3,8 +3,8 @@ package com.gu.thrift.serializer
 import com.github.luben.zstd.{ZstdInputStream, ZstdOutputStream}
 
 import java.io._
+import java.nio.ByteBuffer
 import java.util.zip.{GZIPInputStream, GZIPOutputStream}
-
 import scala.annotation.tailrec
 
 sealed trait CompressionType
@@ -24,15 +24,15 @@ object GzipCompression {
       case e: IOException => throw new RuntimeException(e)
     }
 
-  def uncompress(data: Array[Byte]): Array[Byte] =
+  def uncompress(data: ByteBuffer): ByteBuffer =
     try {
       val bos = new ByteArrayOutputStream()
-      val bis = new ByteArrayInputStream(data)
+      val bis = new ByteBufferBackedInputStream(data)
       val in = new GZIPInputStream(bis)
       IOUtils.copy(in, bos)
       in.close()
       bos.close()
-      bos.toByteArray()
+      ByteBuffer.wrap(bos.toByteArray)
     } catch {
       case e: IOException => throw new RuntimeException(e)
     }
@@ -50,14 +50,14 @@ object ZstdCompression {
       case e: IOException => throw new RuntimeException(e)
     }
   
-  def uncompress(data: Array[Byte]): Array[Byte] = 
+  def uncompress(data: ByteBuffer): ByteBuffer =
     try {
       val bos = new ByteArrayOutputStream()
-      val in = new ZstdInputStream(new ByteArrayInputStream(data))
+      val in = new ZstdInputStream(new ByteBufferBackedInputStream(data))
       IOUtils.copy(in, bos)
       in.close()
       bos.close()
-      bos.toByteArray
+      ByteBuffer.wrap(bos.toByteArray)
     } catch {
       case e: IOException => throw new RuntimeException(e)
     }

@@ -1,10 +1,13 @@
 package com.gu.thrift.serializer
 
-import java.lang.{Byte => JByte}
+import com.twitter.io.Buf.ByteArray
 
+import java.lang.{Byte => JByte}
 import com.twitter.scrooge.ThriftStruct
 import org.apache.thrift.protocol.TCompactProtocol
 import org.apache.thrift.transport.TMemoryBuffer
+
+import java.nio.ByteBuffer
 
 object ThriftSerializer {
 
@@ -12,7 +15,7 @@ object ThriftSerializer {
   private val initialBufferDefault = 128
 
   def serializeToBytes(struct: ThriftStruct, userCompressionType: Option[CompressionType],
-    thriftBufferInitialSize: Option[Int], withSettings: Boolean=false): Array[Byte] = {
+    thriftBufferInitialSize: Option[Int], withSettings: Boolean=false): ByteBuffer = {
 
     val bufferSize = thriftBufferInitialSize.getOrElse(initialBufferDefault)
     val buffer = new TMemoryBuffer(bufferSize)
@@ -39,8 +42,8 @@ object ThriftSerializer {
       */
      val settings: Byte = (other & compression).toByte
 
-     settings +: payload(buffer.getArray, compressionType)
-    } else buffer.getArray
+     ByteBuffer.wrap(settings +: payload(buffer.getArray, compressionType))
+    } else ByteBuffer.wrap(buffer.getArray)
   }
 
   private def payload(data: Array[Byte], compressionType: CompressionType): Array[Byte] = {

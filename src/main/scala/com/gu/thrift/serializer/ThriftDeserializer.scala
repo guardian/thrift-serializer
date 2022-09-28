@@ -8,30 +8,32 @@ import org.apache.thrift.transport.TIOStreamTransport
 import scala.util.Try
 
 object ThriftDeserializer {
+  /** Reads a Thrift value from a byte buffer. By default, will try to read
+    * the first byte for details on how the value is encoded. Plain
+    * values can be decoded by setting the `noHeader` flag to `true`.
+    */
+  def deserialize[T <: ThriftStruct : ThriftStructCodec](buffer: ByteBuffer, noHeader: Boolean): Try[T] = Try {
+    if(!noHeader) {
+      val settings = buffer.get(0)
+      val compressionType = compression(settings)
+      compressionType match {
+        case NoneType => payload(buffer.slice())
+        case GzipType => payload(GzipCompression.uncompress(buffer.slice()))
+        case ZstdType => payload(ZstdCompression.uncompress(buffer.slice()))
+      }
+    } else {
+      payload(buffer)
+    }
+  }
 
   /** Reads a Thrift value from a byte array. By default, will try to read
     * the first byte for details on how the value is encoded. Plain
     * values can be decoded by setting the `noHeader` flag to `true`.
     */
-  def deserialize[T <: ThriftStruct : ThriftStructCodec](buffer: Array[Byte], noHeader: Boolean): Try[T] =
-    Try {
-      if (!noHeader) {
-        val settings = buffer.head
-        val compressionType = compression(settings)
-        compressionType match {
-          case NoneType => payload(buffer.tail)
-          case GzipType => payload(GzipCompression.uncompress(buffer.tail))
-          case ZstdType => payload(ZstdCompression.uncompress(buffer.tail))
-        }
-      } else payload(buffer)
-    }
+  def deserialize[T <: ThriftStruct : ThriftStructCodec](buffer: Array[Byte], noHeader: Boolean): Try[T] = deserialize(ByteBuffer.wrap(buffer), noHeader)
 
-  /** Reads a Thrift value from a byte array. Tries to read the first byte
-    * for details on how the value is encoded and decode accordingly, or
-    * decode as a plain value if it fails.
-    */
-  def deserialize[T <: ThriftStruct : ThriftStructCodec](buffer: Array[Byte]): Try[T] =
-    deserialize(buffer, false) orElse deserialize(buffer, true)
+  def deserialize[T <: ThriftStruct : ThriftStructCodec](buffer: Array[Byte]):Try[T] = deserialize(buffer, false)
+  def deserialize[T <: ThriftStruct : ThriftStructCodec](buffer: ByteBuffer):Try[T] = deserialize(buffer, false)
 
   private def compression(settings: Byte): CompressionType = {
     val compressionMask = 0x07.toByte
@@ -44,8 +46,7 @@ object ThriftDeserializer {
     }
   }
 
-  private def payload[T <: ThriftStruct](buffer: Array[Byte])(implicit codec: ThriftStructCodec[T]): T = {
-    val byteBuffer: ByteBuffer = ByteBuffer.wrap(buffer)
+  private def payload[T <: ThriftStruct](byteBuffer: ByteBuffer)(implicit codec: ThriftStructCodec[T]): T = {
     val bbis = new ByteBufferBackedInputStream(byteBuffer)
     val transport = new TIOStreamTransport(bbis)
     val protocol = new TCompactProtocol(transport)

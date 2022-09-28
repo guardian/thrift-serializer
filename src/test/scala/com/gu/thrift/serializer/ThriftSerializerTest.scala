@@ -12,7 +12,7 @@ class ThriftSerializerTest extends FreeSpec with Matchers {
 
   "serialises the model correctly with ZstdType" - {
 
-    val bytes = ThriftSerializer.serializeToBytes(notification, Some(ZstdType), Some(128))
+    val bytes = ThriftSerializer.serializeToBytes(notification, Some(ZstdType), Some(128)).array()
 
     "lower order bits set correctly" in {
       bytes.head should be (2)
@@ -25,7 +25,7 @@ class ThriftSerializerTest extends FreeSpec with Matchers {
 
   "serialises the model correctly with GzipType" - {
 
-    val bytes = ThriftSerializer.serializeToBytes(notification, Some(GzipType), Some(128))
+    val bytes = ThriftSerializer.serializeToBytes(notification, Some(GzipType), Some(128)).array()
 
     "lower order bits set correctly" in {
       bytes.head should be (1)
@@ -43,9 +43,10 @@ class ThriftSerializerTest extends FreeSpec with Matchers {
 
     val bytes = ThriftSerializer.serializeToBytes(notification, Some(NoneType), Some(128))
     "lower order bits set correctly" in {
-      bytes.head should be (0)
+      bytes.get(0) should be (0)
     }
-
+//    val decoded:String = new String(bytes.tail, "UTF-8")
+//    println(decoded)
     "serialized and deserialized back to itself" in {
       ThriftDeserializer.deserialize(bytes) should be(Success(notification))
     }
@@ -55,7 +56,7 @@ class ThriftSerializerTest extends FreeSpec with Matchers {
 
     val notification = Notification(App.FaciaTool, "operation", "email", "date", Some("id"), Option("message"))
 
-    val bytes = ThriftSerializer.serializeToBytes(notification, None, Some(128), true)
+    val bytes = ThriftSerializer.serializeToBytes(notification, None, Some(128), true).array()
 
     "serialized and deserialized back to itself" in {
       ThriftDeserializer.deserialize(bytes) should be(Success(notification))
