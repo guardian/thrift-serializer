@@ -5,6 +5,7 @@ name := "thrift-serializer"
 organization := "com.gu"
 scalaVersion := "2.13.9"
 
+credentials += Credentials(Path.userHome / ".sbt" / "sonatype_credentials")
 ThisBuild / versionScheme := Some("semver-spec")
 
 libraryDependencies ++= Seq(
