@@ -28,7 +28,7 @@ exports.write = function (struct, compression, callback) {
 
 exports.read = function (Model, rawData, callback) {
 
-	  var buffer = Buffer.isBuffer(rawData) ? rawData : new Buffer(rawData, 'base64');
+	  var buffer = Buffer.isBuffer(rawData) ? rawData : Buffer.from(rawData, 'base64');
 
     if (arguments.length === 4) {
         callback = arguments[3];
@@ -83,7 +83,7 @@ function serialize (struct, noSettings, callback) {
       if (noSettings) {
           bufferWithSettings = buffer;
       } else {
-          bufferWithSettings = Buffer.concat([new Buffer([Compression.None]), buffer]);
+          bufferWithSettings = Buffer.concat([Buffer.from([Compression.None]), buffer]);
       }
 
 			cb(null, bufferWithSettings);
@@ -99,7 +99,7 @@ function zip (struct, callback) {
 					cb(err);
 				} else {
 					cb(null, Buffer.concat([
-						new Buffer([Compression.Gzip]),
+						Buffer.from([Compression.Gzip]),
 						data
 					]));
 				}
