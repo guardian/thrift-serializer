@@ -3,7 +3,7 @@ import ReleaseStateTransformations._
 
 name := "thrift-serializer"
 organization := "com.gu"
-scalaVersion := "2.13.9"
+scalaVersion := "2.13.8"
 
 credentials += Credentials(Path.userHome / ".sbt" / "sonatype_credentials")
 ThisBuild / versionScheme := Some("semver-spec")
