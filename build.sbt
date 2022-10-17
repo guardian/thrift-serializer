@@ -3,22 +3,25 @@ import ReleaseStateTransformations._
 
 name := "thrift-serializer"
 organization := "com.gu"
-scalaVersion := "2.13.1"
+scalaVersion := "2.13.8"
+
+credentials += Credentials(Path.userHome / ".sbt" / "sonatype_credentials")
+ThisBuild / versionScheme := Some("semver-spec")
 
 libraryDependencies ++= Seq(
-    "com.twitter" %% "scrooge-core" % "19.9.0",
-    "org.apache.thrift" % "libthrift" % "0.12.0",
+    "com.twitter" %% "scrooge-core" % "22.1.0",
+    "org.apache.thrift" % "libthrift" % "0.17.0",
   // this has optimised native binaries for all platforms, so is only worth for long lived apps
     "com.github.luben" % "zstd-jni" % "1.3.5-2",
     "org.scalatest" %% "scalatest" % "3.0.8" % "test"
 )
 
 // Settings for building the thrift definition used in test
-scroogeThriftSourceFolder in Test := { baseDirectory {
+Test / scroogeThriftSourceFolder := { baseDirectory {
     base => base / "src/test/thrift"
 }.value }
-scroogeThriftOutputFolder in Test := (sourceManaged in Test).value
-managedSourceDirectories in Test += (scroogeThriftOutputFolder in Test).value
+Test / scroogeThriftOutputFolder := (Test / sourceManaged).value
+Test / managedSourceDirectories += (Test / scroogeThriftOutputFolder).value
 
 // Publish settings
 scmInfo := Some(ScmInfo(url("https://github.com/guardian/thrift-serializer"),
@@ -39,7 +42,13 @@ pomExtra := (
 
 licenses := Seq("Apache V2" -> url("http://www.apache.org/licenses/LICENSE-2.0.html"))
 
-crossScalaVersions := Seq("2.11.12", "2.12.11", "2.13.1")
+crossScalaVersions := Seq("2.12.17", "2.13.9")
+publishTo := Some(
+    if (isSnapshot.value)
+        Opts.resolver.sonatypeSnapshots
+    else
+        Opts.resolver.sonatypeStaging
+)
 
 releaseCrossBuild := true
 releasePublishArtifactsAction := PgpKeys.publishSigned.value
