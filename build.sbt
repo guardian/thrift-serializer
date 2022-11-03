@@ -5,14 +5,13 @@ name := "thrift-serializer"
 organization := "com.gu"
 scalaVersion := "2.13.8"
 
-credentials += Credentials(Path.userHome / ".sbt" / "sonatype_credentials")
 ThisBuild / versionScheme := Some("semver-spec")
 
 libraryDependencies ++= Seq(
     "com.twitter" %% "scrooge-core" % "22.1.0",
-    "org.apache.thrift" % "libthrift" % "0.17.0",
+    "org.apache.thrift" % "libthrift" % "0.13.0",
   // this has optimised native binaries for all platforms, so is only worth for long lived apps
-    "com.github.luben" % "zstd-jni" % "1.3.5-2",
+    "com.github.luben" % "zstd-jni" % "1.4.9-1",
     "org.scalatest" %% "scalatest" % "3.0.8" % "test"
 )
 
