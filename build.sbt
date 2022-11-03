@@ -9,10 +9,11 @@ ThisBuild / versionScheme := Some("semver-spec")
 
 libraryDependencies ++= Seq(
     "com.twitter" %% "scrooge-core" % "22.1.0",
-    "org.apache.thrift" % "libthrift" % "0.13.0",
+    "org.apache.thrift" % "libthrift" % "0.17.0",
   // this has optimised native binaries for all platforms, so is only worth for long lived apps
     "com.github.luben" % "zstd-jni" % "1.4.9-1",
-    "org.scalatest" %% "scalatest" % "3.0.8" % "test"
+    "org.scalatest" %% "scalatest" % "3.0.8" % "test",
+    "com.gu" %% "content-api-models-scala" % "17.3.0" % "test"
 )
 
 // Settings for building the thrift definition used in test

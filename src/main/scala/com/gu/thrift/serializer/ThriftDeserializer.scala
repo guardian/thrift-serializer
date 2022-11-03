@@ -13,6 +13,8 @@ object ThriftDeserializer {
     * values can be decoded by setting the `noHeader` flag to `true`.
     */
   def deserialize[T <: ThriftStruct : ThriftStructCodec](buffer: ByteBuffer, noHeader: Boolean): Try[T] = Try {
+    //ensure that we get reliable behaviour if this method is called more than once (as it is by the convenience methods without `noheader`
+    buffer.rewind()
     if(!noHeader) {
       val settings = buffer.get() //also increments buffer position by 1, so buffer.slice() below returns the "tail"
       val compressionType = compression(settings)
