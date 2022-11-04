@@ -1,6 +1,6 @@
 package com.gu.thrift.serializer
 
-import com.gu.auditing.model.v1.{App, Notification}
+import com.gu.auditing.model.v1.{Notification, App}
 import org.scalatest.{FreeSpec, Matchers}
 import scala.util.Success
 
