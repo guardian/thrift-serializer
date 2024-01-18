@@ -24,7 +24,7 @@ Test / scroogeThriftSourceFolder := { baseDirectory {
 Test / scroogeThriftOutputFolder := (Test / sourceManaged).value
 Test / managedSourceDirectories += (Test / scroogeThriftOutputFolder).value
 
-scalacOptions++= Seq("-unchecked", "-release:11")
+scalacOptions++= Seq("-deprecation", "-unchecked", "-release:11")
 
 description := "Serialize thrift models into bytes"
 
