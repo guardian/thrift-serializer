@@ -26,36 +26,13 @@ Test / managedSourceDirectories += (Test / scroogeThriftOutputFolder).value
 
 scalacOptions++= Seq("-unchecked", "-release:11")
 
-// Publish settings
-//scmInfo := Some(ScmInfo(url("https://github.com/guardian/thrift-serializer"),
-//    "scm:git:git@github.com:guardian/thrift-serializer.git"))
-
 description := "Serialize thrift models into bytes"
-
-//pomExtra := (
-//    <url>https://github.com/guardian/thrift-serializer</url>
-//    <developers>
-//        <developer>
-//            <id>Reettaphant</id>
-//            <name>Reetta Vaahtoranta</name>
-//            <url>https://github.com/guardian</url>
-//        </developer>
-//    </developers>
-//    )
 
 licenses := Seq(License.Apache2)
 
 crossScalaVersions := Seq("2.12.18", "2.13.12")
 
-//publishTo := Some(
-//    if (isSnapshot.value)
-//        Opts.resolver.sonatypeSnapshots
-//    else
-//        Opts.resolver.sonatypeStaging
-//)
-
 releaseCrossBuild := true
-//releasePublishArtifactsAction := PgpKeys.publishSigned.value
 releaseVersion := ReleaseVersion.fromAggregatedAssessedCompatibilityWithLatestRelease().value
 releaseProcess := Seq[ReleaseStep](
     checkSnapshotDependencies,
@@ -65,11 +42,8 @@ releaseProcess := Seq[ReleaseStep](
     setReleaseVersion,
     commitReleaseVersion,
     tagRelease,
-    //publishArtifacts,
     setNextVersion,
     commitNextVersion,
-    //releaseStepCommand("sonatypeRelease"),
-    //pushChanges
 )
 
 Test / testOptions +=
