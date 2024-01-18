@@ -66,3 +66,6 @@ releaseProcess := Seq[ReleaseStep](
     releaseStepCommand("sonatypeRelease"),
     pushChanges
 )
+
+Test / testOptions +=
+  Tests.Argument(TestFrameworks.ScalaTest, "-u", s"test-results/scala-${scalaVersion.value}", "-o")
