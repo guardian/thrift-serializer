@@ -1,10 +1,10 @@
 Thrift Serializer
 ========
+_A library for serializing a thrift model into bytes._
 
- - 2.11: [![Maven Central](https://img.shields.io/maven-central/v/com.gu/thrift-serializer_2.11.svg)](https://mvnrepository.com/artifact/com.gu/thrift-serializer_2.11)
- - 2.12: [![Maven Central](https://img.shields.io/maven-central/v/com.gu/thrift-serializer_2.12.svg)](https://mvnrepository.com/artifact/com.gu/thrift-serializer_2.12)
+[![thrift-serializer Scala version support](https://index.scala-lang.org/guardian/thrift-serializer/thrift-serializer/latest-by-scala-version.svg?platform=jvm)](https://index.scala-lang.org/guardian/thrift-serializer/thrift-serializer)
 
-A library for serializing a thrift model into bytes.
+
 
 ### How to use
 
