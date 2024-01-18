@@ -1,9 +1,10 @@
 import sbtrelease._
 import ReleaseStateTransformations._
+import sbtversionpolicy.withsbtrelease.ReleaseVersion
 
 name := "thrift-serializer"
 organization := "com.gu"
-scalaVersion := "2.13.8"
+scalaVersion := "2.13.12"
 
 ThisBuild / versionScheme := Some("semver-spec")
 
@@ -23,35 +24,16 @@ Test / scroogeThriftSourceFolder := { baseDirectory {
 Test / scroogeThriftOutputFolder := (Test / sourceManaged).value
 Test / managedSourceDirectories += (Test / scroogeThriftOutputFolder).value
 
-// Publish settings
-scmInfo := Some(ScmInfo(url("https://github.com/guardian/thrift-serializer"),
-    "scm:git:git@github.com:guardian/thrift-serializer.git"))
+scalacOptions++= Seq("-deprecation", "-unchecked", "-release:11")
 
 description := "Serialize thrift models into bytes"
 
-pomExtra := (
-    <url>https://github.com/guardian/thrift-serializer</url>
-    <developers>
-        <developer>
-            <id>Reettaphant</id>
-            <name>Reetta Vaahtoranta</name>
-            <url>https://github.com/guardian</url>
-        </developer>
-    </developers>
-    )
+licenses := Seq(License.Apache2)
 
-licenses := Seq("Apache V2" -> url("http://www.apache.org/licenses/LICENSE-2.0.html"))
-
-crossScalaVersions := Seq("2.12.17", "2.13.9")
-publishTo := Some(
-    if (isSnapshot.value)
-        Opts.resolver.sonatypeSnapshots
-    else
-        Opts.resolver.sonatypeStaging
-)
+crossScalaVersions := Seq("2.12.18", "2.13.12")
 
 releaseCrossBuild := true
-releasePublishArtifactsAction := PgpKeys.publishSigned.value
+releaseVersion := ReleaseVersion.fromAggregatedAssessedCompatibilityWithLatestRelease().value
 releaseProcess := Seq[ReleaseStep](
     checkSnapshotDependencies,
     inquireVersions,
@@ -60,11 +42,8 @@ releaseProcess := Seq[ReleaseStep](
     setReleaseVersion,
     commitReleaseVersion,
     tagRelease,
-    publishArtifacts,
     setNextVersion,
     commitNextVersion,
-    releaseStepCommand("sonatypeRelease"),
-    pushChanges
 )
 
 Test / testOptions +=
