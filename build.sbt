@@ -6,8 +6,6 @@ name := "thrift-serializer"
 organization := "com.gu"
 scalaVersion := "2.13.12"
 
-ThisBuild / versionScheme := Some("semver-spec")
-
 libraryDependencies ++= Seq(
     "com.twitter" %% "scrooge-core" % "22.1.0",
     "org.apache.thrift" % "libthrift" % "0.17.0",
@@ -24,7 +22,8 @@ Test / scroogeThriftSourceFolder := { baseDirectory {
 Test / scroogeThriftOutputFolder := (Test / sourceManaged).value
 Test / managedSourceDirectories += (Test / scroogeThriftOutputFolder).value
 
-scalacOptions++= Seq("-deprecation", "-unchecked", "-release:11")
+scalacOptions := Seq("-deprecation", "-release:11")
+javacOptions ++= Seq("--release", "11")
 
 description := "Serialize thrift models into bytes"
 
