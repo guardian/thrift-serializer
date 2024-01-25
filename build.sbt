@@ -23,7 +23,7 @@ Test / scroogeThriftOutputFolder := (Test / sourceManaged).value
 Test / managedSourceDirectories += (Test / scroogeThriftOutputFolder).value
 
 scalacOptions := Seq("-deprecation", "-release:11")
-javacOptions ++= Seq("-target", "11", "-source", "11")
+javacOptions ++= Seq("--release", "11")
 
 description := "Serialize thrift models into bytes"
 
