@@ -1,4 +1,4 @@
-Thrift Serializer
+Thrift Serializer [![Release](https://github.com/guardian/thrift-serializer/actions/workflows/release.yml/badge.svg)](https://github.com/guardian/thrift-serializer/actions/workflows/release.yml)
 ========
 _A library for serializing a thrift model into bytes._
 
