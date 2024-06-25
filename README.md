@@ -61,15 +61,6 @@ def myMethod(thriftObject: MyThriftObject, true): Unit = {
 }
 ```
 
-### How to publish
-
-* The library is published to Maven Central. To publish, register
-to Sonatype and get added to Guardian projects.
-
-* Run sbt release. You will be asked about what version you want the
-release to be during the release process, you do not have to update it manually.
-
-
 ### Node JS
 
 * Install using npm
@@ -104,3 +95,9 @@ serializer.write(message, serializer.Compression.Gzip, function (err, bytes) {
 	console.log(bytes.toString('base64'));
 });
 ```
+
+## How to make releases (Maven Central):
+
+This repo uses [`gha-scala-library-release-workflow`](https://github.com/guardian/gha-scala-library-release-workflow)
+to automate publishing releases (both full & preview releases) - see
+[**Making a Release**](https://github.com/guardian/gha-scala-library-release-workflow/blob/main/docs/making-a-release.md).
