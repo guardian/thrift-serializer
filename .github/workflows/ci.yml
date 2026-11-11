@@ -18,7 +18,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - uses: guardian/setup-scala@v1
+      - uses: guardian/setup-scala@v2
       - name: Build and Test
         run: sbt -v +test
       - uses: EnricoMi/publish-unit-test-result-action@v2
