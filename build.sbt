@@ -9,6 +9,8 @@ scalaVersion := "2.13.12"
 libraryDependencies ++= Seq(
     "com.twitter" %% "scrooge-core" % "22.1.0",
     "org.apache.thrift" % "libthrift" % "0.24.0",
+    // Preserve Thrift HTTP transport; this client selects patched core5/core5-h2 5.4.3.
+    "org.apache.httpcomponents.client5" % "httpclient5" % "5.6.3",
   // this has optimised native binaries for all platforms, so is only worth for long lived apps
     "com.github.luben" % "zstd-jni" % "1.4.9-1",
     "org.scalatest" %% "scalatest" % "3.0.8" % "test",
