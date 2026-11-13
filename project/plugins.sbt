@@ -10,3 +10,7 @@ addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "3.10.0")
 addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.10.0-RC1")
 
 addSbtPlugin("ch.epfl.scala" % "sbt-version-policy" % "3.2.0")
+
+// Patch the build tool graph without changing published library dependencies.
+dependencyOverrides += "org.msgpack" % "msgpack-core" % "0.9.11"
+dependencyOverrides += "org.apache.httpcomponents" % "httpclient" % "4.5.13"
